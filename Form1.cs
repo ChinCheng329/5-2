@@ -20,10 +20,15 @@ namespace _5_2
             InitializeFontSizeComboBox();
             InitializeFontStyleComboBox();
         }
-        private bool isUndoRedo = false;                           
-        private Stack<string> undoStack = new Stack<string>();     
-        private Stack<string> redoStack = new Stack<string>();     
+        private bool isUndoRedo = false;
+        private Stack<MemoryStream> undoStack = new Stack<MemoryStream>();
+        private Stack<MemoryStream> redoStack = new Stack<MemoryStream>();
+        //private Stack<string> undoStack = new Stack<string>();     
+        //private Stack<string> redoStack = new Stack<string>();     
         private const int MaxHistoryCount = 10;
+
+        private int selectionStart = 0;
+        private int selectionLength = 0;
 
 
         private void InitializeFontComboBox()
@@ -51,8 +56,6 @@ namespace _5_2
             comboBoxStyle.Items.Add(FontStyle.Strikeout.ToString());
             comboBoxStyle.SelectedIndex = 0;
         }
-        private int selectionStart = 0;
-        private int selectionLength = 0;
         private void comboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             selectionStart = rtbText.SelectionStart;
@@ -137,48 +140,35 @@ namespace _5_2
             }
         }
 
-            private void btnSave_Click(object sender, EventArgs e)
+        private void btnSave_Click(object sender, EventArgs e)
         {
             saveFileDialog1.Title = "儲存檔案";
             saveFileDialog1.Filter = "RTF格式檔案 (*.rtf)|*.rtf|文字檔案 (*.txt)|*.txt|所有檔案 (*.*)|*.*";
             saveFileDialog1.FilterIndex = 1;
             saveFileDialog1.InitialDirectory = "C:\\";
-
-
             DialogResult result = saveFileDialog1.ShowDialog();
 
-
             FileStream fileStream = null;
-
-
             if (result == DialogResult.OK)
             {
                 try
                 {
-
                     string saveFileName = saveFileDialog1.FileName;
                     string extension = Path.GetExtension(saveFileName);
                     using (fileStream = new FileStream(saveFileName, FileMode.Create, FileAccess.Write))
                     {
+                        if (extension.ToLower() == ".txt")
                         {
-                            if (extension.ToLower() == ".txt")
-                            {
-                                byte[] data = Encoding.UTF8.GetBytes(rtbText.Text);
-                                fileStream.Write(data, 0, data.Length);
-                            }
-
-                            if (extension.ToLower() == ".txt")
-                            {
-                                byte[] data = Encoding.UTF8.GetBytes(rtbText.Text);
-                                fileStream.Write(data, 0, data.Length);
-                            }
-                            else if (extension.ToLower() == ".rtf")
-                            {
-                                rtbText.SaveFile(fileStream, RichTextBoxStreamType.RichText);
-                            }
+                            byte[] data = Encoding.UTF8.GetBytes(rtbText.Text);
+                            fileStream.Write(data, 0, data.Length);
                         }
-                        MessageBox.Show("檔案儲存成功。", "訊息", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        else if (extension.ToLower() == ".rtf")
+                        {
+                            rtbText.SaveFile(fileStream, RichTextBoxStreamType.RichText);
+                        }
                     }
+
+                    MessageBox.Show("檔案儲存成功。", "訊息", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
                 catch (Exception ex)
                 {
@@ -195,15 +185,15 @@ namespace _5_2
             }
         }
 
-
         private void btnUndo_Click(object sender, EventArgs e)
         {
             if (undoStack.Count > 1)
             {
                 isUndoRedo = true;
-                redoStack.Push(undoStack.Pop()); 
-                rtbText.Text = undoStack.Peek(); 
-                UpdateListBox();
+                redoStack.Push(undoStack.Pop());
+                MemoryStream lastSavedState = undoStack.Peek();
+                LoadFromMemory(lastSavedState);
+                //UpdateListBox();
                 isUndoRedo = false;
             }
         }
@@ -212,49 +202,64 @@ namespace _5_2
             if (redoStack.Count > 0)
             {
                 isUndoRedo = true;
-                undoStack.Push(redoStack.Pop()); 
-                rtbText.Text = undoStack.Peek(); 
-                UpdateListBox();
+                undoStack.Push(redoStack.Pop());
+                MemoryStream lastSavedState = undoStack.Peek();
+                LoadFromMemory(lastSavedState);
+                //UpdateListBox();
                 isUndoRedo = false;
             }
         }
 
         private void rtbText_TextChanged(object sender, EventArgs e)
-        {  
+        {
+
             if (isUndoRedo == false)
             {
-                undoStack.Push(rtbText.Text); 
+                SaveCurrentStateToStack(); 
                 redoStack.Clear();            
-              
+
                 if (undoStack.Count > MaxHistoryCount)
                 {
-                    Stack<string> tempStack = new Stack<string>();
+                    Stack<MemoryStream> tempStack = new Stack<MemoryStream>();
                     for (int i = 0; i < MaxHistoryCount; i++)
                     {
                         tempStack.Push(undoStack.Pop());
                     }
                     undoStack.Clear(); 
-                    foreach (string item in tempStack)
+                                       
+                    foreach (MemoryStream item in tempStack)
                     {
                         undoStack.Push(item);
                     }
                 }
-                UpdateListBox(); 
+                //UpdateListBox();
             }
         }
 
+
         void UpdateListBox()
         {
-            listUndo.Items.Clear(); 
+            listUndo.Items.Clear(); // 清空 ListBox 中的元素
 
-            
-            foreach (string item in undoStack)
+            // 將堆疊中的內容逐一添加到 ListBox 中
+            foreach (MemoryStream item in undoStack)
             {
                 listUndo.Items.Add(item);
             }
+        }
+        private void SaveCurrentStateToStack()
+        {
+            MemoryStream memoryStream = new MemoryStream();
+            rtbText.SaveFile(memoryStream, RichTextBoxStreamType.RichText);
+            undoStack.Push(memoryStream);
+        }
 
-
+        private void LoadFromMemory(MemoryStream memoryStream)
+        {
+            memoryStream.Seek(0, SeekOrigin.Begin);
+            rtbText.LoadFile(memoryStream, RichTextBoxStreamType.RichText);
+        }
     }
 }
-    }
+    
 
