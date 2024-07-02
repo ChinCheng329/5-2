@@ -36,13 +36,16 @@
             this.listUndo = new System.Windows.Forms.ListBox();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
+            this.comboBoxFont = new System.Windows.Forms.ComboBox();
+            this.comboBoxSize = new System.Windows.Forms.ComboBox();
+            this.comboBoxStyle = new System.Windows.Forms.ComboBox();
             this.SuspendLayout();
             // 
             // btnOpen
             // 
-            this.btnOpen.Location = new System.Drawing.Point(27, 12);
+            this.btnOpen.Location = new System.Drawing.Point(685, 74);
             this.btnOpen.Name = "btnOpen";
-            this.btnOpen.Size = new System.Drawing.Size(143, 28);
+            this.btnOpen.Size = new System.Drawing.Size(114, 28);
             this.btnOpen.TabIndex = 0;
             this.btnOpen.Text = "開啟檔案";
             this.btnOpen.UseVisualStyleBackColor = true;
@@ -50,9 +53,9 @@
             // 
             // btnSave
             // 
-            this.btnSave.Location = new System.Drawing.Point(198, 12);
+            this.btnSave.Location = new System.Drawing.Point(685, 113);
             this.btnSave.Name = "btnSave";
-            this.btnSave.Size = new System.Drawing.Size(143, 28);
+            this.btnSave.Size = new System.Drawing.Size(114, 28);
             this.btnSave.TabIndex = 1;
             this.btnSave.Text = "存檔";
             this.btnSave.UseVisualStyleBackColor = true;
@@ -60,9 +63,9 @@
             // 
             // btnUndo
             // 
-            this.btnUndo.Location = new System.Drawing.Point(387, 12);
+            this.btnUndo.Location = new System.Drawing.Point(685, 147);
             this.btnUndo.Name = "btnUndo";
-            this.btnUndo.Size = new System.Drawing.Size(143, 28);
+            this.btnUndo.Size = new System.Drawing.Size(114, 28);
             this.btnUndo.TabIndex = 2;
             this.btnUndo.Text = "復原上一步";
             this.btnUndo.UseVisualStyleBackColor = true;
@@ -70,9 +73,9 @@
             // 
             // btnRedo
             // 
-            this.btnRedo.Location = new System.Drawing.Point(562, 12);
+            this.btnRedo.Location = new System.Drawing.Point(685, 181);
             this.btnRedo.Name = "btnRedo";
-            this.btnRedo.Size = new System.Drawing.Size(143, 28);
+            this.btnRedo.Size = new System.Drawing.Size(114, 28);
             this.btnRedo.TabIndex = 3;
             this.btnRedo.Text = "重做下一步";
             this.btnRedo.UseVisualStyleBackColor = true;
@@ -91,7 +94,7 @@
             // 
             this.listUndo.FormattingEnabled = true;
             this.listUndo.ItemHeight = 15;
-            this.listUndo.Location = new System.Drawing.Point(562, 73);
+            this.listUndo.Location = new System.Drawing.Point(536, 74);
             this.listUndo.Name = "listUndo";
             this.listUndo.Size = new System.Drawing.Size(143, 364);
             this.listUndo.TabIndex = 5;
@@ -100,11 +103,41 @@
             // 
             this.openFileDialog1.FileName = "openFileDialog1";
             // 
+            // comboBoxFont
+            // 
+            this.comboBoxFont.FormattingEnabled = true;
+            this.comboBoxFont.Location = new System.Drawing.Point(27, 34);
+            this.comboBoxFont.Name = "comboBoxFont";
+            this.comboBoxFont.Size = new System.Drawing.Size(121, 23);
+            this.comboBoxFont.TabIndex = 6;
+            this.comboBoxFont.SelectedIndexChanged += new System.EventHandler(this.comboBox_SelectedIndexChanged);
+            // 
+            // comboBoxSize
+            // 
+            this.comboBoxSize.FormattingEnabled = true;
+            this.comboBoxSize.Location = new System.Drawing.Point(191, 34);
+            this.comboBoxSize.Name = "comboBoxSize";
+            this.comboBoxSize.Size = new System.Drawing.Size(121, 23);
+            this.comboBoxSize.TabIndex = 7;
+            this.comboBoxSize.SelectedIndexChanged += new System.EventHandler(this.comboBox_SelectedIndexChanged);
+            // 
+            // comboBoxStyle
+            // 
+            this.comboBoxStyle.FormattingEnabled = true;
+            this.comboBoxStyle.Location = new System.Drawing.Point(367, 34);
+            this.comboBoxStyle.Name = "comboBoxStyle";
+            this.comboBoxStyle.Size = new System.Drawing.Size(121, 23);
+            this.comboBoxStyle.TabIndex = 8;
+            this.comboBoxStyle.SelectedIndexChanged += new System.EventHandler(this.comboBox_SelectedIndexChanged);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.comboBoxStyle);
+            this.Controls.Add(this.comboBoxSize);
+            this.Controls.Add(this.comboBoxFont);
             this.Controls.Add(this.listUndo);
             this.Controls.Add(this.rtbText);
             this.Controls.Add(this.btnRedo);
@@ -127,6 +160,9 @@
         private System.Windows.Forms.ListBox listUndo;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private System.Windows.Forms.SaveFileDialog saveFileDialog1;
+        private System.Windows.Forms.ComboBox comboBoxFont;
+        private System.Windows.Forms.ComboBox comboBoxSize;
+        private System.Windows.Forms.ComboBox comboBoxStyle;
     }
 }
 
