@@ -76,6 +76,7 @@
             this.btnRedo.TabIndex = 3;
             this.btnRedo.Text = "重做下一步";
             this.btnRedo.UseVisualStyleBackColor = true;
+            this.btnRedo.Click += new System.EventHandler(this.btnRedo_Click);
             // 
             // rtbText
             // 

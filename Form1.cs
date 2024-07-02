@@ -17,9 +17,10 @@ namespace _5_2
         {
             InitializeComponent();
         }
-        private bool isUndo = false;
-        private Stack<string> textHistory = new Stack<string>();
-        private const int MaxHistoryCount = 10; 
+        private bool isUndoRedo = false;                           
+        private Stack<string> undoStack = new Stack<string>();     
+        private Stack<string> redoStack = new Stack<string>();     
+        private const int MaxHistoryCount = 10;
 
 
         private void btnOpen_Click(object sender, EventArgs e)
@@ -110,46 +111,63 @@ namespace _5_2
 
         private void btnUndo_Click(object sender, EventArgs e)
         {
-            isUndo = true;
-            if (textHistory.Count > 1)
+            if (undoStack.Count > 1)
             {
-                textHistory.Pop();
-                rtbText.Text = textHistory.Peek();
+                isUndoRedo = true;
+                redoStack.Push(undoStack.Pop()); 
+                rtbText.Text = undoStack.Peek(); 
+                UpdateListBox();
+                isUndoRedo = false;
             }
-            UpdateListBox(); // 更新 ListBox
-            isUndo = false;
+        }
+        private void btnRedo_Click(object sender, EventArgs e)
+        {
+            if (redoStack.Count > 0)
+            {
+                isUndoRedo = true;
+                undoStack.Push(redoStack.Pop()); 
+                rtbText.Text = undoStack.Peek(); 
+                UpdateListBox();
+                isUndoRedo = false;
+            }
         }
 
         private void rtbText_TextChanged(object sender, EventArgs e)
-        {
-            if (isUndo == false)
+        {  
+            if (isUndoRedo == false)
             {
-                textHistory.Push(rtbText.Text);
-                if (textHistory.Count > MaxHistoryCount)
+                undoStack.Push(rtbText.Text); 
+                redoStack.Clear();            
+              
+                if (undoStack.Count > MaxHistoryCount)
                 {
                     Stack<string> tempStack = new Stack<string>();
                     for (int i = 0; i < MaxHistoryCount; i++)
                     {
-                        tempStack.Push(textHistory.Pop());
+                        tempStack.Push(undoStack.Pop());
                     }
-                    textHistory.Clear();
+                    undoStack.Clear(); 
                     foreach (string item in tempStack)
                     {
-                        textHistory.Push(item);
+                        undoStack.Push(item);
                     }
                 }
-                UpdateListBox(); // 更新 ListBox
+                UpdateListBox(); 
             }
         }
 
-        private void UpdateListBox()
+        void UpdateListBox()
         {
-            listUndo.Items.Clear();
-            foreach (string item in textHistory)
+            listUndo.Items.Clear(); 
+
+            
+            foreach (string item in undoStack)
             {
                 listUndo.Items.Add(item);
             }
-        }
+
+
     }
 }
+    }
 
