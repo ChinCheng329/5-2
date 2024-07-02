@@ -19,7 +19,8 @@ namespace _5_2
         }
         private bool isUndo = false;
         private Stack<string> textHistory = new Stack<string>();
-        private const int MaxHistoryCount = 10; // 最多紀錄10個紀錄
+        private const int MaxHistoryCount = 10; 
+
 
         private void btnOpen_Click(object sender, EventArgs e)
         {
@@ -35,7 +36,6 @@ namespace _5_2
             {
                 try
                 {
-                    // 使用者在OpenFileDialog選擇的檔案
                     string selectedFileName = openFileDialog1.FileName;
 
                     using (FileStream fileStream = new FileStream(selectedFileName, FileMode.Open, FileAccess.Read))
@@ -113,11 +113,10 @@ namespace _5_2
             isUndo = true;
             if (textHistory.Count > 1)
             {
-                textHistory.Pop(); 
-                rtbText.Text = textHistory.Peek(); 
+                textHistory.Pop();
+                rtbText.Text = textHistory.Peek();
             }
-            
-            
+            UpdateListBox(); // 更新 ListBox
             isUndo = false;
         }
 
@@ -126,8 +125,6 @@ namespace _5_2
             if (isUndo == false)
             {
                 textHistory.Push(rtbText.Text);
-
-                
                 if (textHistory.Count > MaxHistoryCount)
                 {
                     Stack<string> tempStack = new Stack<string>();
@@ -135,22 +132,22 @@ namespace _5_2
                     {
                         tempStack.Push(textHistory.Pop());
                     }
-                    textHistory.Clear(); 
+                    textHistory.Clear();
                     foreach (string item in tempStack)
                     {
                         textHistory.Push(item);
                     }
                 }
-                UpdateListBox(); 
+                UpdateListBox(); // 更新 ListBox
             }
-            void UpdateListBox()
-            {
-                listUndo.Items.Clear(); 
+        }
 
-                foreach (string item in textHistory)
-                {
-                    listUndo.Items.Add(item);
-                }
+        private void UpdateListBox()
+        {
+            listUndo.Items.Clear();
+            foreach (string item in textHistory)
+            {
+                listUndo.Items.Add(item);
             }
         }
     }
